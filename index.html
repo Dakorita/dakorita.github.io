@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dakota Molina — Programación de videojuegos</title>
+<meta name="description" content="Dakota Molina, docente de programación de videojuegos con Unity y Unreal Engine en Gran Canaria.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' fill='none' stroke='%237F5AF0' stroke-width='10'/><circle cx='36' cy='36' r='8' fill='%232CB67D'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #EEEAF8;
+    --paper-2: #E2DBF5;
+    --ink: #231B3D;
+    --ink-soft: #4E4570;
+    --violet: #7F5AF0;
+    --mint: #2CB67D;
+    --spark: #FF8906;
+    --line: rgba(35, 27, 61, .14);
+    --display: 'Unbounded', 'Arial Rounded MT Bold', 'Trebuchet MS', sans-serif;
+    --body: 'Atkinson Hyperlegible', 'Segoe UI', Verdana, sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #1C1633;
+      --paper-2: #261E44;
+      --ink: #F1EDFC;
+      --ink-soft: #B9AFDA;
+      --violet: #9D80F5;
+      --mint: #3DD493;
+      --line: rgba(241, 237, 252, .14);
+      color-scheme: dark;
+    }
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 400 1.125rem/1.6 var(--body);
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--spark); outline-offset: 3px; border-radius: 4px; }
+  img { max-width: 100%; display: block; }
+
+  .wrap { width: min(1080px, 100% - 3rem); margin-inline: auto; }
+
+  /* Barra superior */
+  .top {
+    position: absolute; inset: 0 0 auto 0; z-index: 3;
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .top .wrap { display: flex; justify-content: space-between; align-items: center; padding-block: 1.25rem; }
+  .mark { font: 700 1rem/1 var(--display); text-decoration: none; letter-spacing: -.01em; }
+  .lang { display: flex; gap: .25rem; padding: .25rem; border-radius: 999px; background: color-mix(in srgb, var(--paper) 80%, transparent); border: 1px solid var(--line); }
+  .lang button {
+    font: 700 .875rem/1 var(--body); color: var(--ink-soft);
+    background: none; border: 0; padding: .55rem .9rem; border-radius: 999px; cursor: pointer;
+  }
+  .lang button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+
+  /* Hero con burbujas */
+  .hero { position: relative; min-height: 100svh; display: grid; align-items: end; overflow: hidden; isolation: isolate; }
+  #bubbles { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; touch-action: manipulation; }
+  .hero-text { padding-block: 0 clamp(3rem, 10vh, 6rem); pointer-events: none; }
+  .hero h1 {
+    font: 800 clamp(3rem, 11vw, 8.5rem)/.92 var(--display);
+    letter-spacing: -.045em; margin: 0 0 1.5rem;
+  }
+  .hero p { font-size: clamp(1.15rem, 2.2vw, 1.5rem); max-width: 34ch; margin: 0; color: var(--ink-soft); }
+  .hint { margin-top: 2rem !important; font-size: .95rem !important; display: flex; align-items: center; gap: .6rem; }
+  .hint output { font: 700 .95rem/1 var(--display); color: var(--violet); min-width: 2ch; }
+
+  /* Secciones */
+  section { padding-block: clamp(4rem, 10vw, 7rem); border-top: 1px solid var(--line); }
+  h2 { font: 700 clamp(1.75rem, 4vw, 2.75rem)/1.1 var(--display); letter-spacing: -.03em; margin: 0 0 2rem; }
+  h3 { font: 700 1.25rem/1.25 var(--display); letter-spacing: -.02em; margin: 0 0 .75rem; }
+  p { margin: 0 0 1rem; }
+
+  .about { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 6vw, 5rem); }
+  .about p:first-of-type { font-size: 1.35rem; line-height: 1.5; }
+  .facts { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .facts li { display: grid; grid-template-columns: 9rem 1fr; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--line); }
+  .facts span:first-child { color: var(--ink-soft); }
+
+  .engines { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .engine { padding: 2rem; border-radius: 28px; background: var(--paper-2); }
+  .engine:nth-child(1) { border-bottom-left-radius: 6px; }
+  .engine:nth-child(2) { border-bottom-right-radius: 6px; }
+  .engine p { color: var(--ink-soft); margin: 0; }
+  .engine .dot { width: 14px; height: 14px; border-radius: 50%; background: var(--violet); margin-bottom: 1.25rem; }
+  .engine:nth-child(2) .dot { background: var(--mint); }
+
+  .project { display: grid; grid-template-columns: 1.2fr 1fr; gap: clamp(1.5rem, 5vw, 4rem); align-items: center; }
+  .project-art {
+    aspect-ratio: 4 / 3; border-radius: 50% 50% 42% 58% / 55% 45% 55% 45%;
+    background:
+      radial-gradient(circle at 30% 28%, rgba(255,255,255,.75) 0 6%, transparent 7%),
+      radial-gradient(circle at 70% 65%, var(--mint) 0 16%, transparent 17%),
+      radial-gradient(circle at 38% 58%, var(--violet) 0 28%, transparent 29%),
+      var(--paper-2);
+  }
+  .tags { display: flex; flex-wrap: wrap; gap: .5rem; list-style: none; padding: 0; margin: 0 0 1.5rem; }
+  .tags li { font-size: .9rem; padding: .3rem .8rem; border: 1px solid var(--line); border-radius: 999px; }
+  .actions { display: flex; flex-wrap: wrap; gap: .75rem; }
+  .btn {
+    display: inline-block; text-decoration: none; font-weight: 700;
+    padding: .8rem 1.3rem; border-radius: 999px; border: 2px solid var(--ink);
+  }
+  .btn.solid { background: var(--ink); color: var(--paper); }
+
+  .cause { background: var(--violet); color: #fff; border-top: 0; }
+  .cause h2 { margin-bottom: 1rem; }
+  .cause p { max-width: 48ch; font-size: 1.25rem; }
+
+  .contact ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0; }
+  .contact a {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 1rem;
+    padding: 1.25rem 0; border-bottom: 1px solid var(--line); text-decoration: none;
+    font: 700 clamp(1.4rem, 4vw, 2.5rem)/1.1 var(--display); letter-spacing: -.03em;
+  }
+  .contact a small { font: 400 1rem/1 var(--body); color: var(--ink-soft); letter-spacing: 0; }
+  .contact a:hover { color: var(--violet); }
+
+  footer { padding-block: 2rem calc(2rem + env(safe-area-inset-bottom, 0px)); color: var(--ink-soft); font-size: .95rem; }
+
+  @media (max-width: 760px) {
+    .about, .engines, .project { grid-template-columns: 1fr; }
+    .facts li { grid-template-columns: 1fr; gap: .1rem; }
+    .contact a { flex-direction: column; gap: .4rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="mark" href="#">Dakota</a>
+    <div class="lang" role="group" aria-label="Idioma / Language">
+      <button type="button" data-lang="es" aria-pressed="true">ES</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <canvas id="bubbles" aria-hidden="true"></canvas>
+    <div class="wrap hero-text">
+      <h1>Dakota<br>Molina</h1>
+      <p data-i18n="hero">Enseño a programar videojuegos con Unity y Unreal Engine. Y también los hago.</p>
+      <p class="hint"><span data-i18n="hint">Explota alguna burbuja:</span> <output id="count">0</output></p>
+    </div>
+  </div>
+
+  <section id="sobre-mi">
+    <div class="wrap about">
+      <div>
+        <h2 data-i18n="aboutTitle">Sobre mí</h2>
+        <p data-i18n="about1">Soy docente de programación de videojuegos y trabajo en Sparkling Tech Solutions, en Gran Canaria.</p>
+        <p data-i18n="about2">Me gusta enseñar a hacer juegos tanto como hacerlos. Cuando hay una game jam, ahí estoy.</p>
+        <!-- Añade aquí un párrafo más con algo personal: qué tipo de juegos te gustan, qué te llevó a la docencia… -->
+      </div>
+      <ul class="facts">
+        <li><span data-i18n="fWork">Trabajo</span><span>Sparkling Tech Solutions</span></li>
+        <li><span data-i18n="fTeach">Enseño</span><span data-i18n="fTeachV">Programación de videojuegos</span></li>
+        <li><span data-i18n="fEngines">Motores</span><span>Unity, Unreal Engine</span></li>
+        <li><span data-i18n="fPlace">Desde</span><span>Gran Canaria</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="docencia">
+    <div class="wrap">
+      <h2 data-i18n="teachTitle">Lo que enseño</h2>
+      <div class="engines">
+        <article class="engine">
+          <div class="dot"></div>
+          <h3>Unity</h3>
+          <!-- Concreta qué cubres: C#, físicas, UI, 2D/3D, exportar a WebGL… -->
+          <p data-i18n="unity">Programación de juegos en C#, desde las primeras mecánicas hasta un proyecto jugable.</p>
+        </article>
+        <article class="engine">
+          <div class="dot"></div>
+          <h3>Unreal Engine</h3>
+          <!-- Concreta qué cubres: Blueprints, C++, arquitectura de proyecto… -->
+          <p data-i18n="unreal">Desarrollo de juegos en Unreal, con proyectos prácticos de principio a fin.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="proyectos">
+    <div class="wrap">
+      <h2 data-i18n="projTitle">Proyectos</h2>
+
+      <article class="project">
+        <!-- Sustituye este dibujo por una captura o GIF: <img src="img/bubble.gif" alt="…"> -->
+        <div class="project-art" role="img" aria-label="Global Game Jam 2025"></div>
+        <div>
+          <h3>Global Game Jam 2025: Bubble</h3>
+          <p data-i18n="ggj">Un juego hecho en 48 horas para la Global Game Jam 2025, con el tema «Bubble».</p>
+          <ul class="tags"><li>Unity</li><li>C#</li><li data-i18n="jam">Game jam, 48 h</li></ul>
+          <div class="actions">
+            <!-- Si está en itch.io, pon aquí el enlace directo al juego -->
+            <a class="btn solid" href="https://dakota-m.itch.io" data-i18n="play">Ver en itch.io</a>
+            <a class="btn" href="https://github.com/Dakorita/Global-Game-Jam-2025-Bubble" data-i18n="code">Ver el código</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Para añadir otro proyecto, copia el <article class="project"> de arriba aquí debajo
+           y añade sus textos (es/en) en el objeto TEXT del script. -->
+    </div>
+  </section>
+
+  <section class="cause" id="las-chicas">
+    <div class="wrap">
+      <h2>Las Chicas También Juegan</h2>
+      <p data-i18n="cause">Formo parte de esta iniciativa por la inclusión de las mujeres en el mundo de los videojuegos.</p>
+      <!-- Si la iniciativa tiene web o redes, añade un enlace aquí -->
+    </div>
+  </section>
+
+  <section class="contact" id="contacto">
+    <div class="wrap">
+      <h2 data-i18n="contactTitle">Hablemos</h2>
+      <ul>
+        <li><a href="https://www.linkedin.com/in/dakota-molina/">LinkedIn <small data-i18n="cLinkedin">Perfil profesional</small></a></li>
+        <li><a href="https://dakota-m.itch.io">itch.io <small data-i18n="cItch">Mis juegos</small></a></li>
+        <li><a href="https://github.com/Dakorita">GitHub <small data-i18n="cGithub">Código</small></a></li>
+        <li><a href="mailto:dakotamolina1994@gmail.com">Email <small>dakotamolina1994@gmail.com</small></a></li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap" data-i18n="footer">Dakota Molina, Gran Canaria.</div>
+</footer>
+
+<script>
+/* ---------- Textos en los dos idiomas ---------- */
+const TEXT = {
+  es: {
+    title: 'Dakota Molina — Programación de videojuegos',
+    hero: 'Enseño a programar videojuegos con Unity y Unreal Engine. Y también los hago.',
+    hint: 'Explota alguna burbuja:',
+    aboutTitle: 'Sobre mí',
+    about1: 'Soy docente de programación de videojuegos y trabajo en Sparkling Tech Solutions, en Gran Canaria.',
+    about2: 'Me gusta enseñar a hacer juegos tanto como hacerlos. Cuando hay una game jam, ahí estoy.',
+    fWork: 'Trabajo', fTeach: 'Enseño', fTeachV: 'Programación de videojuegos', fEngines: 'Motores', fPlace: 'Desde',
+    teachTitle: 'Lo que enseño',
+    unity: 'Programación de juegos en C#, desde las primeras mecánicas hasta un proyecto jugable.',
+    unreal: 'Desarrollo de juegos en Unreal, con proyectos prácticos de principio a fin.',
+    projTitle: 'Proyectos',
+    ggj: 'Un juego hecho en 48 horas para la Global Game Jam 2025, con el tema «Bubble».',
+    jam: 'Game jam, 48 h', play: 'Ver en itch.io', code: 'Ver el código',
+    cause: 'Formo parte de esta iniciativa por la inclusión de las mujeres en el mundo de los videojuegos.',
+    contactTitle: 'Hablemos',
+    cLinkedin: 'Perfil profesional', cItch: 'Mis juegos', cGithub: 'Código',
+    footer: 'Dakota Molina, Gran Canaria.'
+  },
+  en: {
+    title: 'Dakota Molina — Game programming',
+    hero: 'I teach game programming with Unity and Unreal Engine. And I make games too.',
+    hint: 'Pop a bubble or two:',
+    aboutTitle: 'About me',
+    about1: "I'm a game programming teacher and I work at Sparkling Tech Solutions in Gran Canaria, Spain.",
+    about2: "I enjoy teaching how to make games as much as making them. If there's a game jam, I'm in.",
+    fWork: 'Work', fTeach: 'I teach', fTeachV: 'Game programming', fEngines: 'Engines', fPlace: 'Based in',
+    teachTitle: 'What I teach',
+    unity: 'Game programming in C#, from the first mechanics to a playable project.',
+    unreal: 'Game development in Unreal, with hands-on projects from start to finish.',
+    projTitle: 'Projects',
+    ggj: 'A game made in 48 hours for Global Game Jam 2025, on the theme "Bubble".',
+    jam: 'Game jam, 48 h', play: 'See it on itch.io', code: 'View the code',
+    cause: "I'm part of this initiative for women's inclusion in the games industry. The name means \"Girls Play Too\".",
+    contactTitle: "Let's talk",
+    cLinkedin: 'Professional profile', cItch: 'My games', cGithub: 'Code',
+    footer: 'Dakota Molina, Gran Canaria, Spain.'
+  }
+};
+
+function setLang(lang) {
+  const t = TEXT[lang] || TEXT.es;
+  document.documentElement.lang = lang;
+  document.title = t.title;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.dataset.i18n;
+    if (t[k] !== undefined) el.textContent = t[k];
+  });
+  document.querySelectorAll('.lang button').forEach(b =>
+    b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  try { localStorage.setItem('lang', lang); } catch (e) {}
+}
+
+document.querySelectorAll('.lang button').forEach(b =>
+  b.addEventListener('click', () => setLang(b.dataset.lang)));
+
+let initial = 'es';
+try { initial = localStorage.getItem('lang') || ''; } catch (e) { initial = ''; }
+if (!initial) initial = (navigator.language || 'es').toLowerCase().startsWith('es') ? 'es' : 'en';
+setLang(initial);
+
+/* ---------- Burbujas del hero ---------- */
+(() => {
+  const canvas = document.getElementById('bubbles');
+  const ctx = canvas.getContext('2d');
+  const countEl = document.getElementById('count');
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let W, H, dpr, bubbles = [], bits = [], popped = 0;
+
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  let colors;
+  const readColors = () => colors = [css('--violet'), css('--mint'), css('--spark')];
+  readColors();
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readColors);
+
+  function make(fromBottom) {
+    const r = 14 + Math.random() * Math.min(70, W * 0.07);
+    return {
+      x: Math.random() * W,
+      y: fromBottom ? H + r + Math.random() * 120 : Math.random() * H,
+      r, vy: 0.25 + Math.random() * 0.55, phase: Math.random() * Math.PI * 2,
+      c: colors[Math.random() < .55 ? 0 : (Math.random() < .75 ? 1 : 2)]
+    };
+  }
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = canvas.clientWidth; H = canvas.clientHeight;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const n = Math.round(Math.min(20, Math.max(9, W / 70)));
+    bubbles = Array.from({ length: n }, () => make(false));
+    if (still) draw();
+  }
+
+  function drawBubble(b) {
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+    ctx.lineWidth = Math.max(2, b.r * 0.09);
+    ctx.strokeStyle = b.c;
+    ctx.globalAlpha = .85; ctx.stroke();
+    ctx.globalAlpha = .12; ctx.fillStyle = b.c; ctx.fill();
+    ctx.globalAlpha = .9; ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(b.x - b.r * .38, b.y - b.r * .38, b.r * .13, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    bubbles.forEach(drawBubble);
+    bits.forEach(p => {
+      ctx.globalAlpha = Math.max(p.life, 0);
+      ctx.fillStyle = p.c;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2); ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  function step(t) {
+    bubbles.forEach((b, i) => {
+      b.y -= b.vy;
+      b.x += Math.sin(t / 1400 + b.phase) * 0.35;
+      if (b.y < -b.r - 10) bubbles[i] = make(true);
+    });
+    bits.forEach(p => { p.x += p.vx; p.y += p.vy; p.vy += .12; p.life -= .03; });
+    bits = bits.filter(p => p.life > 0);
+    draw();
+    requestAnimationFrame(step);
+  }
+
+  canvas.addEventListener('pointerdown', e => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left, y = e.clientY - rect.top;
+    for (let i = bubbles.length - 1; i >= 0; i--) {
+      const b = bubbles[i];
+      if (Math.hypot(x - b.x, y - b.y) <= b.r + 6) {
+        for (let k = 0; k < 12; k++) {
+          const a = (k / 12) * Math.PI * 2;
+          bits.push({ x: b.x + Math.cos(a) * b.r, y: b.y + Math.sin(a) * b.r,
+            vx: Math.cos(a) * 2.2, vy: Math.sin(a) * 2.2, s: 2 + b.r * .05, life: 1, c: b.c });
+        }
+        bubbles[i] = make(true);
+        countEl.textContent = ++popped;
+        if (still) { bits = []; draw(); }
+        break;
+      }
+    }
+  });
+
+  addEventListener('resize', resize);
+  resize();
+  if (!still) requestAnimationFrame(step);
+})();
+</script>
+</body>
+</html>
